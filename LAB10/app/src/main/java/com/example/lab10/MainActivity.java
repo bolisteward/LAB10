@@ -2,9 +2,12 @@ package com.example.lab10;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +19,10 @@ public class MainActivity extends AppCompatActivity {
     private String pwdMySQL = "YFWFa4tP0D";
     private String database = "i8i4zh6ZJb";
     private String[] datosConexion = null;
-    private TextView consulta;
+    private TableLayout consulta;
     private EditText edtConsulta;
+    private TableRow row;
+    private TextView dato, info;
 
 
     @Override
@@ -25,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        consulta = findViewById(R.id.txtTexto);
+        consulta = findViewById(R.id.table);
         edtConsulta = findViewById(R.id.edtConsulta);
+        info = findViewById(R.id.txtTexto);
     }
 
     public void mostrarResultados(View view) {
@@ -47,11 +53,24 @@ public class MainActivity extends AppCompatActivity {
 
             System.out.println(resultadoSQL);
 
-            String resultadoConsulta = resultadoSQL[0];
-            String numFilas = resultadoSQL[1];
-            String numColumnas = resultadoSQL[2];
-            consulta.setText(resultadoConsulta + "\nNúmero de filas devueltas: " +
-                    numFilas + "\nNúmero de columnas devueltas: " + numColumnas);
+            String[] resultadoConsulta = resultadoSQL[0].split("\n");
+            int numFilas = Integer.parseInt(resultadoSQL[1]);
+            int numColumnas = Integer.parseInt(resultadoSQL[2]);
+
+            for (int i=0; i<=numFilas; i++){
+                row = new TableRow(getApplicationContext());
+                String linea = resultadoConsulta[i];
+                dato = new TextView(getApplicationContext());
+                dato.setText(linea);
+                row.addView(dato);
+
+                consulta.addView(row);
+
+            }
+
+            String dato = "Número de filas devueltas: " +
+                    numFilas + "\nNúmero de columnas devueltas: " + numColumnas;
+            info.setText(dato);
         } catch (Exception ex) {
             Toast.makeText(this, "Error al obtener resultados de la consulta Transact-SQL: "
                     + ex.getMessage(), Toast.LENGTH_LONG).show();
